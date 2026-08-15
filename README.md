@@ -40,6 +40,12 @@ http://localhost:8080/v3/api-docs
 ./mvnw test
 ```
 
+## Screenshot
+
+![Swagger UI](img.png)
+![Application Flow](img_1.png)
+![Database Tables and Fields](img_2.png)
+
 ## Acceptance criteria mapping
 
 | Requirement | Implementation |
@@ -51,7 +57,3 @@ http://localhost:8080/v3/api-docs
 | Maintain multiple address books | `POST /api/addressbooks`, `GET /api/addressbooks` |
 | Print a unique set of contacts across address books | `GET /api/addressbooks/contacts` |
 | Data persistence | H2 (in-memory) via Spring Data JPA |
-
-## Screenshot
-
-![Swagger UI](img.png)
