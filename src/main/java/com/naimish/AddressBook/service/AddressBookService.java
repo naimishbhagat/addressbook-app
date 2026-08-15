@@ -4,20 +4,19 @@ import com.naimish.AddressBook.model.AddressBook;
 import com.naimish.AddressBook.model.Contact;
 import com.naimish.AddressBook.repository.AddressBookRepository;
 import com.naimish.AddressBook.repository.ContactRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AddressBookService {
 
-    @Autowired
-    private AddressBookRepository addressBookRepository;
-    @Autowired
-    private ContactRepository contactRepository;
+    private final AddressBookRepository addressBookRepository;
+    private final ContactRepository contactRepository;
 
     public AddressBook createAddressBook(AddressBook addressBook) {
         addressBook.setId(null);
@@ -31,11 +30,11 @@ public class AddressBookService {
         return addressBookRepository.findAll();
     }
 
-    public AddressBook getAddressBook(int addressBookId) {
+    public AddressBook getAddressBook(long addressBookId) {
         return addressBookRepository.findById(addressBookId).orElse(null);
     }
 
-    public Contact getContact(int addressBookId,int contactId) {
+    public Contact getContact(long addressBookId,int contactId) {
         Contact contact = contactRepository.findById(contactId).orElse(null);
         if (contact != null && belongsToAddressBook(contact, addressBookId)) {
             return contact;
@@ -44,21 +43,21 @@ public class AddressBookService {
         return null;
     }
 
-    public AddressBook updateContact(int addressBookId,int contactId, Contact contact) {
+    public Contact updateContact(long addressBookId,int contactId, Contact contact) {
         AddressBook addressBook = getAddressBook(addressBookId);
         Contact existingContact = contactRepository.findById(contactId).orElse(null);
         if(addressBook != null && existingContact != null && belongsToAddressBook(existingContact, addressBookId)){
             existingContact.setName(contact.getName());
             existingContact.setPhoneNo(contact.getPhoneNo());
-            contactRepository.save(existingContact);
+            Contact saved = contactRepository.save(existingContact);
             log.info("Updated contact id={} in address book id={}", contactId, addressBookId);
-            return addressBook;
+            return saved;
         }
         log.warn("Failed to update contact id={} in address book id={}: not found or does not belong to that address book", contactId, addressBookId);
         return null;
     }
 
-    public void deleteContact(int addressBookId,int contactId) {
+    public void deleteContact(long addressBookId,int contactId) {
         Contact existingContact = contactRepository.findById(contactId).orElse(null);
         if(existingContact != null && belongsToAddressBook(existingContact, addressBookId)) {
             contactRepository.deleteById(contactId);
@@ -68,11 +67,11 @@ public class AddressBookService {
         }
     }
 
-    private boolean belongsToAddressBook(Contact contact, int addressBookId) {
+    private boolean belongsToAddressBook(Contact contact, long addressBookId) {
         return contact.getAddressBook() != null && contact.getAddressBook().getId().equals(addressBookId);
     }
 
-    public List<Contact> getAllContacts(int addressBookId) {
+    public List<Contact> getAllContacts(long addressBookId) {
         AddressBook addressBook = getAddressBook(addressBookId);
         if(addressBook != null){
             return addressBook.getContacts();
@@ -82,7 +81,7 @@ public class AddressBookService {
     }
 
 
-    public Contact addContact(int addressBookId, Contact contact) {
+    public Contact addContact(long addressBookId, Contact contact) {
         AddressBook addressBook = getAddressBook(addressBookId);
         if(addressBook != null){
             contact.setContactId(null);

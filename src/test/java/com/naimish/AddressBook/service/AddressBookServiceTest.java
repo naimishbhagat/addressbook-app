@@ -40,7 +40,7 @@ class AddressBookServiceTest {
     @BeforeEach
     void setUp() {
         addressBook = new AddressBook();
-        addressBook.setId(1);
+        addressBook.setId(1L);
         addressBook.setBranch("Melbourne");
 
         contact = new Contact();
@@ -53,7 +53,7 @@ class AddressBookServiceTest {
     @Test
     void createAddressBook_ignoresClientSuppliedIdSoItAlwaysInserts() {
         AddressBook incoming = new AddressBook();
-        incoming.setId(99);
+        incoming.setId(99L);
         incoming.setBranch("Sydney");
         when(addressBookRepository.save(any(AddressBook.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -65,7 +65,7 @@ class AddressBookServiceTest {
 
     @Test
     void addContact_savesContactUnderRequestedAddressBook() {
-        when(addressBookRepository.findById(1)).thenReturn(Optional.of(addressBook));
+        when(addressBookRepository.findById(1L)).thenReturn(Optional.of(addressBook));
         Contact newContact = new Contact();
         newContact.setContactId(42);
         newContact.setName("New Person");
@@ -81,7 +81,7 @@ class AddressBookServiceTest {
 
     @Test
     void addContact_returnsNullWhenAddressBookMissing() {
-        when(addressBookRepository.findById(99)).thenReturn(Optional.empty());
+        when(addressBookRepository.findById(99L)).thenReturn(Optional.empty());
 
         Contact result = addressBookService.addContact(99, new Contact());
 
@@ -118,28 +118,29 @@ class AddressBookServiceTest {
 
     @Test
     void updateContact_updatesNameAndPhoneWhenOwnershipMatches() {
-        when(addressBookRepository.findById(1)).thenReturn(Optional.of(addressBook));
+        when(addressBookRepository.findById(1L)).thenReturn(Optional.of(addressBook));
         when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.save(any(Contact.class))).thenAnswer(inv -> inv.getArgument(0));
         Contact updates = new Contact();
         updates.setName("Updated Name");
         updates.setPhoneNo(List.of("999"));
 
-        AddressBook result = addressBookService.updateContact(1, 1, updates);
+        Contact result = addressBookService.updateContact(1, 1, updates);
 
-        assertThat(result).isEqualTo(addressBook);
-        assertThat(contact.getName()).isEqualTo("Updated Name");
-        assertThat(contact.getPhoneNo()).containsExactly("999");
+        assertThat(result).isNotNull();
+        assertThat(result.getName()).isEqualTo("Updated Name");
+        assertThat(result.getPhoneNo()).containsExactly("999");
         verify(contactRepository).save(contact);
     }
 
     @Test
     void updateContact_returnsNullWhenContactBelongsToDifferentAddressBook() {
         AddressBook otherBook = new AddressBook();
-        otherBook.setId(2);
-        when(addressBookRepository.findById(2)).thenReturn(Optional.of(otherBook));
+        otherBook.setId(2L);
+        when(addressBookRepository.findById(2L)).thenReturn(Optional.of(otherBook));
         when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
 
-        AddressBook result = addressBookService.updateContact(2, 1, new Contact());
+        Contact result = addressBookService.updateContact(2, 1, new Contact());
 
         assertThat(result).isNull();
         verify(contactRepository, never()).save(any());
@@ -166,7 +167,7 @@ class AddressBookServiceTest {
     @Test
     void getAllContacts_returnsContactsForExistingAddressBook() {
         addressBook.setContacts(List.of(contact));
-        when(addressBookRepository.findById(1)).thenReturn(Optional.of(addressBook));
+        when(addressBookRepository.findById(1L)).thenReturn(Optional.of(addressBook));
 
         List<Contact> result = addressBookService.getAllContacts(1);
 
@@ -175,7 +176,7 @@ class AddressBookServiceTest {
 
     @Test
     void getAllContacts_returnsNullWhenAddressBookMissing() {
-        when(addressBookRepository.findById(99)).thenReturn(Optional.empty());
+        when(addressBookRepository.findById(99L)).thenReturn(Optional.empty());
 
         List<Contact> result = addressBookService.getAllContacts(99);
 

@@ -1,7 +1,7 @@
 package com.naimish.AddressBook.controller;
 
-import com.naimish.AddressBook.model.AddressBook;
-import com.naimish.AddressBook.model.Contact;
+import com.naimish.AddressBook.dto.AddressBookRequest;
+import com.naimish.AddressBook.dto.ContactRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -83,24 +83,24 @@ class AddressBookControllerIntegrationTest {
 
     @Test
     void addingContactToNonExistentAddressBookReturnsNotFound() throws Exception {
-        Contact contact = new Contact();
-        contact.setName("Nobody");
-        contact.setPhoneNo(List.of("000"));
+        ContactRequest request = new ContactRequest();
+        request.setName("Nobody");
+        request.setPhoneNo(List.of("000"));
 
         mockMvc.perform(post("/api/addressbooks/999999/contacts")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(contact)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void creatingAddressBookWithBlankBranchReturnsBadRequest() throws Exception {
-        AddressBook addressBook = new AddressBook();
-        addressBook.setBranch("");
+        AddressBookRequest request = new AddressBookRequest();
+        request.setBranch("");
 
         mockMvc.perform(post("/api/addressbooks")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressBook)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.branch").exists());
     }
@@ -108,13 +108,13 @@ class AddressBookControllerIntegrationTest {
     @Test
     void addingContactWithBlankNameReturnsBadRequest() throws Exception {
         int addressBookId = createAddressBook("Newcastle");
-        Contact contact = new Contact();
-        contact.setName("");
-        contact.setPhoneNo(List.of("444444"));
+        ContactRequest request = new ContactRequest();
+        request.setName("");
+        request.setPhoneNo(List.of("444444"));
 
         mockMvc.perform(post("/api/addressbooks/" + addressBookId + "/contacts")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(contact)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name").exists());
     }
@@ -122,38 +122,38 @@ class AddressBookControllerIntegrationTest {
     @Test
     void addingContactWithNoPhoneNumbersReturnsBadRequest() throws Exception {
         int addressBookId = createAddressBook("Wollongong");
-        Contact contact = new Contact();
-        contact.setName("No Phone");
-        contact.setPhoneNo(List.of());
+        ContactRequest request = new ContactRequest();
+        request.setName("No Phone");
+        request.setPhoneNo(List.of());
 
         mockMvc.perform(post("/api/addressbooks/" + addressBookId + "/contacts")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(contact)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.phoneNo").exists());
     }
 
     private int createAddressBook(String branch) throws Exception {
-        AddressBook addressBook = new AddressBook();
-        addressBook.setBranch(branch);
+        AddressBookRequest request = new AddressBookRequest();
+        request.setBranch(branch);
 
         String response = mockMvc.perform(post("/api/addressbooks")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressBook)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        return objectMapper.readTree(response).get("Id").asInt();
+        return objectMapper.readTree(response).get("id").asInt();
     }
 
     private int addContact(int addressBookId, String name, String phoneNo) throws Exception {
-        Contact contact = new Contact();
-        contact.setName(name);
-        contact.setPhoneNo(List.of(phoneNo));
+        ContactRequest request = new ContactRequest();
+        request.setName(name);
+        request.setPhoneNo(List.of(phoneNo));
 
         String response = mockMvc.perform(post("/api/addressbooks/" + addressBookId + "/contacts")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(contact)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
