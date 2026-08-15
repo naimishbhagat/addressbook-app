@@ -93,6 +93,46 @@ class AddressBookControllerIntegrationTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void creatingAddressBookWithBlankBranchReturnsBadRequest() throws Exception {
+        AddressBook addressBook = new AddressBook();
+        addressBook.setBranch("");
+
+        mockMvc.perform(post("/api/addressbooks")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(addressBook)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.branch").exists());
+    }
+
+    @Test
+    void addingContactWithBlankNameReturnsBadRequest() throws Exception {
+        int addressBookId = createAddressBook("Newcastle");
+        Contact contact = new Contact();
+        contact.setName("");
+        contact.setPhoneNo(List.of("444444"));
+
+        mockMvc.perform(post("/api/addressbooks/" + addressBookId + "/contacts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contact)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").exists());
+    }
+
+    @Test
+    void addingContactWithNoPhoneNumbersReturnsBadRequest() throws Exception {
+        int addressBookId = createAddressBook("Wollongong");
+        Contact contact = new Contact();
+        contact.setName("No Phone");
+        contact.setPhoneNo(List.of());
+
+        mockMvc.perform(post("/api/addressbooks/" + addressBookId + "/contacts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contact)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.phoneNo").exists());
+    }
+
     private int createAddressBook(String branch) throws Exception {
         AddressBook addressBook = new AddressBook();
         addressBook.setBranch(branch);

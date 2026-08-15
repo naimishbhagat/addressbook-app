@@ -2,6 +2,8 @@ package com.naimish.AddressBook.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -17,8 +19,11 @@ public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer contactId;
+
+    @NotBlank(message = "name is required")
     private String name;
 
+    @NotEmpty(message = "at least one phone number is required")
     @ElementCollection
     @CollectionTable(name = "contact_phone", joinColumns = @JoinColumn(name = "contact_id"))
     @Column(name = "phone_no")
