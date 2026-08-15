@@ -43,8 +43,8 @@ http://localhost:8080/v3/api-docs
 ## Screenshot
 
 ![Swagger UI](img.png)
-![Database tables and fields](database.png)
-![Application Flow](application_flow.png)
+![Database Tables and Fields](img_1.png)
+![Application Flow](img_2.png)
 
 ## Acceptance criteria mapping
 
