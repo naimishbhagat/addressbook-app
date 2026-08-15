@@ -34,6 +34,12 @@ Raw OpenAPI spec:
 http://localhost:8080/v3/api-docs
 ```
 
+Health Check:
+
+```
+http://localhost:8080/actuator/health
+```
+
 ## Running the tests
 
 ```
