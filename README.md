@@ -40,6 +40,10 @@ http://localhost:8080/v3/api-docs
 ./mvnw test
 ```
 
+## Test API using Postman
+```
+Download AddressBook-postman.zip and extract them into collections folder.
+```
 ## Screenshot
 
 ![Swagger UI](img.png)
