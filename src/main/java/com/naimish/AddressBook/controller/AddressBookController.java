@@ -69,7 +69,7 @@ public class AddressBookController {
     }
 
     @PutMapping("/{addressBookId}/contacts/{contactId}")
-    public ResponseEntity<ContactResponse> updateContact(@PathVariable long addressBookId,@PathVariable int contactId, @Valid @RequestBody ContactRequest request){
+    public ResponseEntity<ContactResponse> updateContact(@PathVariable long addressBookId,@PathVariable long contactId, @Valid @RequestBody ContactRequest request){
         log.info("Received request to update contact id={} in address book id={}", contactId, addressBookId);
         Contact updated = addressBookService.updateContact(addressBookId, contactId, AddressBookMapper.toEntity(request));
         if (updated == null) {
@@ -79,7 +79,7 @@ public class AddressBookController {
     }
 
     @DeleteMapping("/{addressBookId}/contacts/{contactId}")
-    public ResponseEntity<String> removeContact(@PathVariable long addressBookId,@PathVariable int contactId){
+    public ResponseEntity<String> removeContact(@PathVariable long addressBookId,@PathVariable long contactId){
         log.info("Received request to delete contact id={} from address book id={}", contactId, addressBookId);
         Contact contact = addressBookService.getContact(addressBookId, contactId);
         if(contact != null) {

@@ -34,7 +34,7 @@ public class AddressBookService {
         return addressBookRepository.findById(addressBookId).orElse(null);
     }
 
-    public Contact getContact(long addressBookId,int contactId) {
+    public Contact getContact(long addressBookId,long contactId) {
         Contact contact = contactRepository.findById(contactId).orElse(null);
         if (contact != null && belongsToAddressBook(contact, addressBookId)) {
             return contact;
@@ -43,7 +43,7 @@ public class AddressBookService {
         return null;
     }
 
-    public Contact updateContact(long addressBookId,int contactId, Contact contact) {
+    public Contact updateContact(long addressBookId,long contactId, Contact contact) {
         AddressBook addressBook = getAddressBook(addressBookId);
         Contact existingContact = contactRepository.findById(contactId).orElse(null);
         if(addressBook != null && existingContact != null && belongsToAddressBook(existingContact, addressBookId)){
@@ -57,7 +57,7 @@ public class AddressBookService {
         return null;
     }
 
-    public void deleteContact(long addressBookId,int contactId) {
+    public void deleteContact(long addressBookId,long contactId) {
         Contact existingContact = contactRepository.findById(contactId).orElse(null);
         if(existingContact != null && belongsToAddressBook(existingContact, addressBookId)) {
             contactRepository.deleteById(contactId);

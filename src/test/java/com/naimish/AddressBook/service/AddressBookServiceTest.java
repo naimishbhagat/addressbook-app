@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -44,7 +44,7 @@ class AddressBookServiceTest {
         addressBook.setBranch("Melbourne");
 
         contact = new Contact();
-        contact.setContactId(1);
+        contact.setContactId(1L);
         contact.setName("Naimish");
         contact.setPhoneNo(List.of("0400000000"));
         contact.setAddressBook(addressBook);
@@ -67,7 +67,7 @@ class AddressBookServiceTest {
     void addContact_savesContactUnderRequestedAddressBook() {
         when(addressBookRepository.findById(1L)).thenReturn(Optional.of(addressBook));
         Contact newContact = new Contact();
-        newContact.setContactId(42);
+        newContact.setContactId(42L);
         newContact.setName("New Person");
         newContact.setPhoneNo(List.of("111"));
         when(contactRepository.save(any(Contact.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -91,7 +91,7 @@ class AddressBookServiceTest {
 
     @Test
     void getContact_returnsContactWhenItBelongsToAddressBook() {
-        when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
 
         Contact result = addressBookService.getContact(1, 1);
 
@@ -100,7 +100,7 @@ class AddressBookServiceTest {
 
     @Test
     void getContact_returnsNullWhenContactBelongsToDifferentAddressBook() {
-        when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
 
         Contact result = addressBookService.getContact(2, 1);
 
@@ -109,7 +109,7 @@ class AddressBookServiceTest {
 
     @Test
     void getContact_returnsNullWhenContactNotFound() {
-        when(contactRepository.findById(999)).thenReturn(Optional.empty());
+        when(contactRepository.findById(999L)).thenReturn(Optional.empty());
 
         Contact result = addressBookService.getContact(1, 999);
 
@@ -119,7 +119,7 @@ class AddressBookServiceTest {
     @Test
     void updateContact_updatesNameAndPhoneWhenOwnershipMatches() {
         when(addressBookRepository.findById(1L)).thenReturn(Optional.of(addressBook));
-        when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
         when(contactRepository.save(any(Contact.class))).thenAnswer(inv -> inv.getArgument(0));
         Contact updates = new Contact();
         updates.setName("Updated Name");
@@ -138,7 +138,7 @@ class AddressBookServiceTest {
         AddressBook otherBook = new AddressBook();
         otherBook.setId(2L);
         when(addressBookRepository.findById(2L)).thenReturn(Optional.of(otherBook));
-        when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
 
         Contact result = addressBookService.updateContact(2, 1, new Contact());
 
@@ -148,20 +148,20 @@ class AddressBookServiceTest {
 
     @Test
     void deleteContact_deletesWhenOwnershipMatches() {
-        when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
 
         addressBookService.deleteContact(1, 1);
 
-        verify(contactRepository).deleteById(1);
+        verify(contactRepository).deleteById(1L);
     }
 
     @Test
     void deleteContact_doesNothingWhenContactBelongsToDifferentAddressBook() {
-        when(contactRepository.findById(1)).thenReturn(Optional.of(contact));
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
 
         addressBookService.deleteContact(2, 1);
 
-        verify(contactRepository, never()).deleteById(anyInt());
+        verify(contactRepository, never()).deleteById(anyLong());
     }
 
     @Test
@@ -186,7 +186,7 @@ class AddressBookServiceTest {
     @Test
     void getUniqueContacts_dedupesSameNameAndPhoneAcrossAddressBooks() {
         Contact duplicateInAnotherBook = new Contact();
-        duplicateInAnotherBook.setContactId(2);
+        duplicateInAnotherBook.setContactId(2L);
         duplicateInAnotherBook.setName("Naimish");
         duplicateInAnotherBook.setPhoneNo(List.of("0400000000"));
 

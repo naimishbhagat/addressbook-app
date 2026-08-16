@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer contactId;
+    private Long contactId;
 
     private String name;
 

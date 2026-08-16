@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ContactResponse {
 
-    private Integer contactId;
+    private Long contactId;
     private String name;
     private List<String> phoneNo;
 }
